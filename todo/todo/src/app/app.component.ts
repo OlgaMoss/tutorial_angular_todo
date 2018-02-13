@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Model, TodoItem } from './model';
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'todo-app',
   templateUrl: './app.component.html'
 })
