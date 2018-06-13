@@ -23,28 +23,28 @@ export class ProductComponent {
         return "p-a-1 "+(product.price < 50 ? "bg-info" : "bg-warning");
     }
 
-    getClasses(key: number): string {
-        let product = this.model.getProduct(key);
-        return 'p-a-1 ' +(product.price < 50 ? "bg-info" : "bg-warning");
+    getProduct(key: number): Product{
+        return this.model.getProduct(key);
     }
 
-    getClassMap(key: number): Object{
-        let product = this.model.getProduct(key);
-        return{
-            "text-xs-center bg-danger": product.name == "Kayak",
-            "bg-info": product.price < 50
-        };
+    getProducts(): Product[]{
+        return this.model.getProducts();
     }
 
-    fontSizeWithUnits: string = "30px";
-    fontSizeWithoutUnits: string = "30";
+    getProductCount(): number{
+        console.log("getProductCount invoked");
+        return this.model.getProducts().length;
+    }
 
-    getStyles(key: number) {
-        let product = this.model.getProduct(key);
-        return{
-            fontSize: "30px",
-            "margin.px": 100,
-            color: product.price > 50 ? "red" : "green"
-        };
+    targetName: string = "Kayak";
+
+    counter: number = 1;
+
+    get nextProduct(): Product{
+        return this.model.getProducts().shift();
+    }
+
+    getKey(index: number, product: Product){
+        return product.category;
     }
 }
