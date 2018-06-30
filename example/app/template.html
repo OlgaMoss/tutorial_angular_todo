@@ -1,51 +1,8 @@
-﻿<template #titleTemplate let-text="title">
-    <h4 class="p-a-1 bg-success">{{text}}</h4>
-</template>
-<template [ngTemplateOutlet]="titleTemplate" [ngOutletContext]="{title:'Header'}"></template>
-
-<div class="bg-info p-a-1 m-a-1">
-    There are {{getProductCount()}} products.
-</div>
-
-<template [ngTemplateOutlet]="titleTemplate" [ngOutletContext]="{title:'Footer'}"></template>
-
+﻿<!-- 
 <div class="bg-info p-a-1">
-    Next Product
+    Selected product: {{selectedProduct || '(None)'}}
+    Selected product: {{product.value || '(None)'}}
 </div>
-
-<!-- <div *ngIf="getProductCount() > 4" class="bg-info p-a-1 m-t-1">
-    There are more than 4 products in the model
-</div>
-
-<div *ngIf="getProductByPosition(0).name != 'Kayak'" class="bg-info p-a-1 m-t-1">
-    The first product isn't a Kayak
-</div> -->
-
-<!-- <div class="bg-info p-a-1 m-t-1" [ngSwitch]="getProductCount()">
-    <span *ngSwitchCase="2">There are two products</span>
-    <span *ngSwitchCase="5">There are five products</span>
-    <span *ngSwitchDefault>This is the default</span>
-</div> -->
-
-<!-- <div class="bg-info p-a-1 m-t-1" [ngSwitch]="getProduct(1).name">
-    <span *ngSwitchCase="targetName">Kayak</span>
-    <span *ngSwitchCase="'Lifejacket'">Lifejacket</span>
-    <span *ngSwitchDefault>Other product</span>
-</div> -->
-
-<!-- <table class="table table-sm table-bordered m-t-1">
-    <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Price</th>
-    </tr>
-    <tr *ngFor="let item of getProducts()">
-        <td>{{item.name}}</td>
-        <td>{{item.category}}</td>
-        <td>{{item.price}}</td>
-    </tr>
-</table> -->
-
 <table class="table table-sm table-bordered m-t-1">
     <tr>
         <th></th>
@@ -53,10 +10,127 @@
         <th>Category</th>
         <th>Price</th>
     </tr>
-    <tr *ngFor="let item of getProducts(); let i = index; let odd = odd; trackBy:getKey" [class.bg-primary]="odd" [class.bg-info]="!odd">
+    <tr *ngFor="let item of getProducts(); let i = index;" [class.bg-info]="getSelected(item)">
+        <tr *ngFor="let item of getProducts(); let i = index;" (mouseover)="product.value=item.name" [class.bg-info]="product.value==item.name">
+        <td (mouseover)="selectedProduct=item.name">{{i+1}}</td>
         <td>{{i+1}}</td>
         <td>{{item.name}}</td>
         <td>{{item.category}}</td>
         <td>{{item.price}}</td>
     </tr>
 </table>
+
+<div class="form-group">
+    <label>
+        Product name
+    </label>
+    <input class="form-control" (input)="selectedProduct=$event.target.value" />
+    <input #product class="form-control" (keyup.enter)="selectedProduct=product.value" />
+    <input #product class="form-control" (input)="false" />
+    <input class="form-control" (input)="selectedProduct=$event.target.value" [value]="selectedProduct || ''" />
+    <input class="form-control" [(ngModel)]="selectedProduct" />
+</div>
+
+<div class="form-group">
+    <label>
+            Product name
+        </label>
+    <input class="form-control" [(ngModel)]="selectedProduct" />
+    <input class="form-control" (input)="selectedProduct=$event.target.value" [value]="selectedProduct || ''" />
+</div>
+  -->
+
+<div class="bg-info p-a-1 m-b-1">
+    Model data: {{jsonProduct}}
+</div>
+<!-- <form novalidate (ngSubmit)="addProduct(newProduct)"> -->
+<!-- <form novalidate #form="ngForm" (ngSubmit)="submitForm(form)"> -->
+<form novalidate [formGroup]="form" (ngSubmit)="submitForm(form)">
+    <div class="bg-danger p-a-1 m-b-1" *ngIf="formSubmitted && form.invalid">
+        There are problems with form
+        <ul>
+            <!-- <li *ngFor="let error of getFormValidationMessages(form)"> -->
+            <li *ngFor="let error of form.getFormValidationMessages()">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+    <div class="form-group" *ngFor="let control of form.productControls">
+        <label> {{control.label}} </label>
+        <input class="form-control" name="{{control.modelProperty}}" [(ngModel)]="newProduct[control.modelProperty]" formControlName="{{control.modelProperty}}">
+        <ul class="text-danger list-unstyled" *ngIf="(formSubmitted || control.dirty) && control.invalid">
+            <li *ngFor="let error of control.getValidationMessages()">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- <div class="form-group">
+        <label> Name</label> -->
+    <!-- <input class="form-control" name="name" #name="ngModel" [(ngModel)]="newProduct.name" required minlength="5" pattern="^[A-Za-z ]+$"> -->
+    <!-- <input class="form-control" name="name" [(ngModel)]="newProduct.name" formControlName="name"> -->
+
+    <!-- <ul class="text-danger list-unsyled" *ngIf="name.dirty && name.invalid">
+            <li *ngIf="name.errors.required">
+                You must enter a product name
+            </li>
+            <li *ngIf="name.errors.pattern">
+                Product names can only contain letters and spaces
+            </li>
+            <li *ngIf="name.errors.minlength">
+                {{name.errors.minlength.requiredLength}} characters
+            </li>
+        </ul> -->
+    <!-- <ul class="text-danger list-unsyled" *ngIf="name.dirty && name.invalid"> -->
+    <!-- <ul class="text-danger list-unstyled" *ngIf="(formSubmitted || name.dirty) && name.invalid"> -->
+    <!-- <ul class="text-danger list-unstyled" *ngIf="(formSubmitted || form.controls['name'].dirty) && form.controls['name'].invalid"> -->
+    <!-- <li *ngFor="let error of getValidationMessages(name)"> -->
+    <!-- <li *ngFor="let error of form.controls['name'].getValidationMessages()">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+    <div class="form-group">
+        <label>Category</label>
+        <input class="form-control" name="category" [(ngModel)]="newProduct.category" formControlName="category">
+        <ul class="text-danger list-unstyled" *ngIf="(formSubmitted || form.controls['category'].dirty) && form.controls['category'].invalid">
+            <li *ngFor="let error of form.controls['category'].getValidationMessages()">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+
+    <div class="form-group">
+        <label> Price</label> -->
+    <!-- <input class="form-control" name="price" #price="ngModel" [(ngModel)]="newProduct.price" required pattern="^[0-9\.]+$"> -->
+    <!-- <input class="form-control" name="price" [(ngModel)]="newProduct.price" formControlName="price"> -->
+    <!-- <ul class="tesxt-danger list-unstyled" *ngIf="(formSubmitted || price.dirty) && price.invalid"> -->
+    <!-- <ul class="text-danger list-unstyled" *ngIf="(formSubmitted || form.controls['price'].dirty) && form.controls['price'].invalid"> -->
+    <!-- <li *ngFor="let error of getValidationMessages(price)"> -->
+    <!-- <ul class="tesxt-danger list-unstyled" *ngIf="(formSubmitted || price.dirty) && price.invalid"> -->
+    <!-- <li *ngFor="let error of form.controls['price'].getValidationMessages()">
+                {{error}}
+            </li>
+        </ul>
+    </div> -->
+    <!-- <div class="form-group">
+        <label> Category</label>
+        <input class="form-control" [(ngModel)]="newProduct.category">
+    </div>
+    <div class="form-group">
+        <label> Price</label>
+        <input class="form-control" [(ngModel)]="newProduct.price">
+    </div> -->
+    <button class="btn btn-primary" type="submit" [disabled]="formSubmitted && form.invalid" [class.btn-secondary]="formSubmitted && form.invalid">Create</button>
+</form>
+
+<style>
+    input.ng-dirty.ng-invalid {
+        border: 2px solid #ff0000
+    }
+    
+    input.ng-dirty.ng-valid {
+        border: 2px solid #6bc502
+    }
+</style>
